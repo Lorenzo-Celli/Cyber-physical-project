@@ -1,45 +1,50 @@
-K_1=[1.5 0; 0 -0.12];
+% parameters
+bitlength = 13; % fino a 13 funge
+gamma = 1; 
+[p, q] = GeneratePrimes(bitlength);
+%p = 65537
+%q = 65537
+N = p * q;
 
-K_2=[-1.486 0; 0 0.1195];
+A = eye(2);
+B = eye(2);
+L = eye(2);
+LC = eye(2);
 
-L=[0.6439 -0.1288;
-   -0.1131 0.5657;
-   0.5643 -0.1129
-   -0.3566 1.7832];
+ximax = ((p-1) / 2) * gamma;
 
-W=[100 0; 0 100];
+EncA = EncryptMatrix(A, gamma, ximax, p, q);
+EncB = EncryptMatrix(B, gamma, ximax, p, q);
+EncL = EncryptMatrix(L, gamma, ximax, p, q);
+EncminusLC = EncryptMatrix(-LC, gamma, ximax, p, q);
 
+% encrypted state estimation
+%hatxk = [1.2; 0];
+%uk = [1; 0];
+%yk = [1; 0];
+yk=out.yk.Data;
+hatxk=out.hatxk.Data;
+uk=out.uk.data;
 
+Enchatxk = EncryptMatrix(hatxk, gamma, ximax, p, q);
+Encuk = EncryptMatrix(uk, gamma, ximax, p, q);
+Encyk = EncryptMatrix(yk, gamma, ximax, p, q);
 
-%plant = ss(A,[B E_d E_f],C,[D zeros(size(C,1),size(E_d,2)+size(E_f,2))]);
-A=[0.9843 0 0.0251 0;
-   0 0.0892 0 0.0175;
-   0 0 0.9747 0;
-   0 0 0 0.9824];
+Enchatxkp1 = HSum(HSum(HSum(HMul(EncA, Enchatxk, N), ...
+                        HMul(EncB, Encuk, N), N), ...
+                        HMul(EncL, Encyk, N), N), ...
+                        HMul(EncminusLC, Enchatxk, N), ...
+                        N);
 
-B=[0.0478 0.0010;
-   0.0005 0.0348;
-   0 0.0765;
-   0.0554 0];
+hatxk = DecryptMatrix(Enchatxkp1, gamma, ximax, p, N, q);
 
-C=ones(4,4);
+% encrypted control evaluation
+Kp = eye(2);
+vk = [1; 1];
+EncKp = EncryptMatrix(Kp, gamma, ximax, p, q);
+Encvk = EncryptMatrix(vk, gamma, ximax, p, q);
+Encminusxkhat = EncryptMatrix(-hatxk, gamma, ximax, p, q);
 
-D=zeros(4,2);
+Encuk = HMul(EncKp, HSum(Encvk, Encminusxkhat, N), N);
 
-E_d=eye(4,4);
-
-E_f=B;
-
-x_0=[12.6 13 4.8 4.9];
-
-f = zeros(2,1);
-
-d = zeros(4,1);
-
-F_f=zeros(4,2);
-
-F_d=zeros(4,4);
-
-u=ones(2,1);
-
-plant = ss(A,B,C,D)
+uk = DecryptMatrix(Encuk, gamma, ximax, p, N, q);

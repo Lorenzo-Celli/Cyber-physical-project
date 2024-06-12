@@ -12,7 +12,7 @@ function xi = InverseGamma(mappedxi, gamma, ximax)
 %   xi - The original value of xi
 
     % Calculate the threshold for negative xi
-    threshold = 2 * gamma * ximax + 1;
+    threshold = ximax + 1;
 
     % Check the condition for GammaValue
     if mappedxi < threshold
@@ -20,6 +20,7 @@ function xi = InverseGamma(mappedxi, gamma, ximax)
         xi = mappedxi / gamma;
     else
         % Case: mappedxi corresponds to xi < 0
-        xi = (mappedxi - 2*ximax - 1)/gamma
+        xi = (mappedxi - 2*ximax - 1) / gamma;
+        %xi = (mappedxi - 2*ximax - 1) / gamma;
     end 
 end

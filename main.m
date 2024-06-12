@@ -2,15 +2,15 @@
 bitlength = 18; % 2^bitlength prime sizes
 gamma = 10000; % precision = (log_10 gamma) decimal places
 [p, q] = GeneratePrimes(bitlength);
-N = p * q;
 
 A = sys.A;
 B = sys.B;
 L = Ld;
 LC = L*sys.C;
 
-% this works
-ximax = ((p-1) / 2) / gamma;
+% |M| = p = 2*N + 1
+ximax = (p-1)/2;
+
 % NOTE: xi MUST be within [-ximax; +ximax]
 
 %EncA = EncryptMatrix(A, gamma, ximax, p, q);
@@ -28,16 +28,20 @@ uk=transpose(out.uk.data(2,:));
 %Encyk = EncryptMatrix(yk, gamma, ximax, p, q);
 
 m1 = 0.2454; % funge 
-m2 = -0.1232; % non funge 
-m3 = -1; % non funge
+m2 = -0.1232; % funge 
+m3 = -1; % funge
 m4 = 2; % funge
-c = EncryptValue(Gamma(m2, gamma, ximax), p, q);
-decrypted_m = InverseGamma(DecryptValue(c, p), gamma, ximax)
+% solo c1 * c2 non va, c1 + c2 va sempre con qualsiasi numero di cifra
+% decimale (poi è finito)
+c1 = EncryptValue(Gamma(m4, gamma, ximax), p, q);
+c2 = EncryptValue(Gamma(m4, gamma, ximax), p, q);
+decrypted_m = InverseGamma(DecryptValue(c1 + c2, p), gamma, ximax)
 
-%IMPORTANT: when multiplying cyphertext, do InverseGamma with gamma^2
+%IMPORTANT: when multiplying cyphertexts, do InverseGamma with gamma^2
 % this is because gamma multiplies with itself during homomorphic
 % multiplication
 
+% after the above works, do this:
 %Enchatxkp1 = HSum(HSum(HSum(HMul(EncA, Enchatxk, p), ...
 %                        HMul(EncB, Encuk, p), p), ...
 %                        HMul(EncL, Encyk, p), p), ...

@@ -1,15 +1,13 @@
-function originalMatrix = DecryptMatrix(encryptedMatrix, gamma, ximax, p, N, q)
+function originalMatrix = DecryptMatrix(encryptedMatrix, gamma, ximax, p)
 % DecryptMatrix decrypts each element of the encrypted matrix and applies the inverse Gamma transformation
 % Usage:
-%   originalMatrix = DecryptMatrix(encryptedMatrix, ximax, p, N, q)
+%   originalMatrix = DecryptMatrix(encryptedMatrix, ximax, p)
 %
 % Inputs:
 %   encryptedMatrix - The encrypted matrix with values to be decrypted and transformed
 %   gamma           - Gain value
 %   ximax           - The maximum xi value for Gamma transformation
-%   p               - Parameter for the Enc function
-%   N               - Modulus value for the Enc function
-%   q               - Upper bound for the random selection of w in Enc function
+%   p               - Parameter for the DecryptValue function
 %
 % Output:
 %   originalMatrix - The original matrix with decrypted and transformed values
@@ -26,11 +24,8 @@ function originalMatrix = DecryptMatrix(encryptedMatrix, gamma, ximax, p, N, q)
             % Get the current encrypted element
             encryptedValue = encryptedMatrix(i, j);
 
-            % Decrypt the value
-            gammaValue = DecryptValue(encryptedValue, p);
-
             % Store the original value in the output matrix
-            originalMatrix(i, j) = InverseGamma(gammaValue, gamma, ximax);
+            originalMatrix(i, j) = InverseGamma(DecryptValue(encryptedValue, p), gamma, ximax);
         end
     end
 end

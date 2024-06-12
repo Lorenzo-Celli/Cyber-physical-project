@@ -12,7 +12,7 @@ function c = EncryptValue(m, p, q)
 %   c - The encrypted value
 
     % Randomly pick w from the set [1, q-1]
-    w = randi([1, q-1]);
+    w = randi(q-1);
 
     % Calculate the encrypted value
     c = mod(m + w*p, p*q);

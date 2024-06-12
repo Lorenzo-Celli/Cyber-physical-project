@@ -17,6 +17,8 @@ function mappedxi = Gamma(xi, gamma, ximax)
         mappedxi = round(xi * gamma);
     else
         % Case: xi < 0
-        mappedxi = 2 * ximax + 1 + round(xi * gamma);
+        % non so quali tra questi 2 funga
+        mappedxi = round(xi * gamma) + 2 * ximax + 1;
+        %mappedxi = round(xi * gamma) + 2 * gamma * ximax + 1;
     end
 end

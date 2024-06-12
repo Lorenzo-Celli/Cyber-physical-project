@@ -23,12 +23,9 @@ function encryptedMatrix = EncryptMatrix(inputMatrix, gamma, ximax, p, q)
         for j = 1:cols
             % Get the current element
             xi = inputMatrix(i, j);
-
-            % Apply Gamma transformation
-            gammaValue = Gamma(xi, gamma, ximax);
             
             % Store the encrypted value in the output matrix
-            encryptedMatrix(i, j) = EncryptValue(gammaValue, p, q);
+            encryptedMatrix(i, j) = EncryptValue(Gamma(xi, gamma, ximax), p, q);
         end
     end
 end

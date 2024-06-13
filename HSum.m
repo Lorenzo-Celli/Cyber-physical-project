@@ -1,16 +1,16 @@
-function res = HSum(c, cprime, p)
+function res = HSum(c, cprime, N)
 % HSum calculates the combined encrypted value based on the inputs c, c_prime, and N
 % Usage:
-%   combinedCipher = HSum(c, c_prime, p)
+%   combinedCipher = HSum(c, c_prime, N)
 %
 % Inputs:
 %   c        - The first encrypted value
 %   cprime   - The second encrypted value
-%   p        - The secret prime factor
+%   N        - The modulus
 %
 % Output:
 %   res - The combined encrypted value
 
     % Calculate the combined encrypted value
-    res = c + cprime;
+    res = mod(c + cprime, N);
 end

@@ -1,62 +1,55 @@
 % parameters
-bitlength = 18; % 2^bitlength prime sizes
-gamma = 10000; % precision = (log_10 gamma) decimal places
-[p, q] = GeneratePrimes(bitlength);
+bitlength = 35;     % 2^bitlength prime sizes
+gamma = vpa(10000); % precision = (log_10 gamma) decimal places
+[p, q] = GeneratePrimes(bitlength); 
+p = vpa(p);
+N = p*q;
 
-A = sys.A;
-B = sys.B;
-L = Ld;
-LC = L*sys.C;
+% get parameters and outputs from quad-tank system
+A = vpa(sys.A);
+B = vpa(sys.B);
+L = vpa(Ld);
+LC = vpa(L*sys.C);
+yk = vpa(transpose(out.yk.Data(10,:)));
+hatxk = vpa(transpose(out.hatxk.Data(10,:)));
+uk = vpa(transpose(out.uk.data(10,:)));
 
-% |M| = p = 2*N + 1
+% |M| = p = 2*ximax + 1
 ximax = (p-1)/2;
 
-% NOTE: xi MUST be within [-ximax; +ximax]
+% NOTE: xi MUST be within [-ximax/gamma; +ximax/gamma]
 
-%EncA = EncryptMatrix(A, gamma, ximax, p, q);
-%EncB = EncryptMatrix(B, gamma, ximax, p, q);
-%EncL = EncryptMatrix(L, gamma, ximax, p, q);
-%EncminusLC = EncryptMatrix(-LC, gamma, ximax, p, q);
-
-% encrypted state estimation
-yk=transpose(out.yk.Data(2,:));
-hatxk=transpose(out.hatxk.Data(2,:));
-uk=transpose(out.uk.data(2,:));
-
-%Enchatxk = EncryptMatrix(hatxk, gamma, ximax, p, q);
-%Encuk = EncryptMatrix(uk, gamma, ximax, p, q);
-%Encyk = EncryptMatrix(yk, gamma, ximax, p, q);
-
-m1 = 0.2454; % funge 
-m2 = -0.1232; % funge 
-m3 = -1; % funge
-m4 = 2; % funge
-% solo c1 * c2 non va, c1 + c2 va sempre con qualsiasi numero di cifra
-% decimale (poi è finito)
-c1 = EncryptValue(Gamma(m4, gamma, ximax), p, q);
-c2 = EncryptValue(Gamma(m4, gamma, ximax), p, q);
-decrypted_m = InverseGamma(DecryptValue(c1 + c2, p), gamma, ximax)
+% encrypt every matrix
+EncA = EncryptMatrix(A, gamma, ximax, p, q);
+EncB = EncryptMatrix(B, gamma, ximax, p, q);
+EncL = EncryptMatrix(L, gamma, ximax, p, q);
+EncminusLC = EncryptMatrix(-LC, gamma, ximax, p, q);
+Enchatxk = EncryptMatrix(hatxk, gamma, ximax, p, q);
+Encuk = EncryptMatrix(uk, gamma, ximax, p, q);
+Encyk = EncryptMatrix(yk, gamma, ximax, p, q);
 
 %IMPORTANT: when multiplying cyphertexts, do InverseGamma with gamma^2
 % this is because gamma multiplies with itself during homomorphic
 % multiplication
 
-% after the above works, do this:
-%Enchatxkp1 = HSum(HSum(HSum(HMul(EncA, Enchatxk, p), ...
-%                        HMul(EncB, Encuk, p), p), ...
-%                        HMul(EncL, Encyk, p), p), ...
-%                        HMul(EncminusLC, Enchatxk, p), ...
-%                        p);
+% encrypted state estimation
+Enchatxkp1 = HSum(HSum(HSum(HMul(EncA, Enchatxk, N), ...
+                      HMul(EncB, Encuk, N), N), ...
+                      HMul(EncL, Encyk, N), N), ...
+                      HMul(EncminusLC, Enchatxk, N), N);
 
-%hatxkp1 = DecryptMatrix(Enchatxkp1, gamma^2, ximax, p, N, q);
+% these two should be the same, except that hatkxp1 is approximated to 4th
+% decimal place
+hatxkp1 = DecryptMatrix(Enchatxkp1, gamma^2, ximax, p)
+realhatxkp1 = A*hatxk + B*uk + L*yk - LC*hatxk
 
 % encrypted control evaluation
-Kp = eye(6);
-vk = ones(6,1);
+Kp = vpa(eye(2, 6));
+vk = vpa(zeros(6,1));
 EncKp = EncryptMatrix(Kp, gamma, ximax, p, q);
 Encvk = EncryptMatrix(vk, gamma, ximax, p, q);
-Encminusxkhat = EncryptMatrix(-hatxk, gamma, ximax, p, q);
+Encminusxkhatp1 = EncryptMatrix(-hatxkp1, gamma, ximax, p, q);
 
-Encuk = HMul(EncKp, HSum(Encvk, Encminusxkhat, N), N);
+Encukp1 = HMul(EncKp, HSum(Encvk, Encminusxkhatp1, N), N);
 
-%uk = DecryptMatrix(Encuk, gamma^2, ximax, p);
+ukp1 = DecryptMatrix(Encuk, gamma^2, ximax, p);

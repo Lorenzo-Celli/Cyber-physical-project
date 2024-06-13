@@ -16,7 +16,7 @@ function encryptedMatrix = EncryptMatrix(inputMatrix, gamma, ximax, p, q)
     [rows, cols] = size(inputMatrix);
 
     % Initialize the output matrix
-    encryptedMatrix = zeros(rows, cols);
+    encryptedMatrix = vpa(zeros(rows, cols));
 
     % Iterate over each element of the input matrix
     for i = 1:rows

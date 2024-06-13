@@ -21,6 +21,5 @@ function xi = InverseGamma(mappedxi, gamma, ximax)
     else
         % Case: mappedxi corresponds to xi < 0
         xi = (mappedxi - 2*ximax - 1) / gamma;
-        %xi = (mappedxi - 2*ximax - 1) / gamma;
     end 
 end

@@ -10,9 +10,9 @@ A = vpa(sys.A);
 B = vpa(sys.B);
 L = vpa(Ld);
 LC = vpa(L*sys.C);
-yk = vpa(transpose(out.yk.Data(10,:)));
-hatxk = vpa(transpose(out.hatxk.Data(10,:)));
-uk = vpa(transpose(out.uk.data(10,:)));
+yk = vpa(transpose(out.yk.Data(2,:)));
+hatxk = vpa(transpose(out.hatxk.Data(2,:)));
+uk = vpa(transpose(out.uk.data(2,:)));
 
 % |M| = p = 2*ximax + 1
 ximax = (p-1)/2;

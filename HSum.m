@@ -1,5 +1,5 @@
 function res = HSum(c, cprime, N)
-% HSum calculates the combined encrypted value based on the inputs c, c_prime, and N
+% HSum calculates the combined encrypted value based on the inputs c and c_prime
 % Usage:
 %   combinedCipher = HSum(c, c_prime, N)
 %

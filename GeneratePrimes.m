@@ -1,4 +1,4 @@
-function [p, q] = generatePrimes(bitLength)
+function [p, q] = GeneratePrimes(bitLength)
     % generatePrimes generates two prime numbers p and q of a specified bit length
     % Usage:
     %   [p, q] = generatePrimes(bitLength)

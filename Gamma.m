@@ -1,7 +1,7 @@
 function mappedxi = Gamma(xi, gamma, ximax)
 % Gamma calculates the value based on the input xi and ximax according to the given piecewise function
 % Usage:
-%   result = Gamma(xi, ximax)
+%   result = Gamma(xi, gamma, ximax)
 %
 % Inputs:
 %   xi    - Input value

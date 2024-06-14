@@ -1,7 +1,7 @@
 function xi = InverseGamma(mappedxi, gamma, ximax)
-% InverseGamma calculates the original xi based on the GammaValue and ximax
+% InverseGamma calculates the original xi based on gamma and ximax
 % Usage:
-%   xi = InverseGamma(GammaValue, ximax)
+%   xi = InverseGamma(mappedxi, gamma, ximax)
 %
 % Inputs:
 %   mappedxi - The value obtained from the Gamma function

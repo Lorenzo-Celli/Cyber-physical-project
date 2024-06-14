@@ -1,5 +1,5 @@
 function c = EncryptValue(m, p, q)
-% Enc calculates the encrypted value based on the input m, p, N, and q
+% Enc calculates the encrypted value based on the input m, p and q
 % Usage:
 %   c = Enc(m, p, q)
 %
